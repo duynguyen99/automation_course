@@ -1,0 +1,67 @@
+:root {
+  --bg: #fbf7ef;
+  --card: #ffffff;
+  --ink: #2b2a26;
+  --muted: #77736a;
+  --line: #e6dfd0;
+  --brand: #3f6b4c;
+  --brand-dark: #2f5239;
+  --danger: #b23a2b;
+  --warn: #b7791f;
+  --ok: #2f7d4f;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); line-height: 1.5; }
+a { color: var(--brand); }
+header.site-header {
+  display: flex; align-items: center; gap: 24px; padding: 14px 32px;
+  background: var(--brand); color: #fff;
+}
+header.site-header .logo { font-weight: 700; font-size: 20px; color: #fff; text-decoration: none; letter-spacing: .3px; }
+header.site-header nav { display: flex; gap: 18px; flex-wrap: wrap; }
+header.site-header nav a { color: #e9f1ea; text-decoration: none; font-size: 15px; }
+header.site-header nav a:hover { color: #fff; text-decoration: underline; }
+header.site-header .cart-link { margin-left: auto; color: #fff; text-decoration: none; font-weight: 600; }
+#cart-count { display: inline-block; min-width: 22px; padding: 0 6px; border-radius: 11px; background: #fff; color: var(--brand); text-align: center; }
+main { max-width: 1040px; margin: 0 auto; padding: 32px; }
+h1 { margin: 0 0 8px; font-size: 28px; }
+.subtitle { color: var(--muted); margin: 0 0 24px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 24px; }
+.form { max-width: 420px; display: grid; gap: 14px; }
+.form label { display: grid; gap: 6px; font-weight: 600; font-size: 14px; }
+input[type=text], input[type=password], input[type=email], input[type=tel], input[type=number], select, textarea {
+  font: inherit; padding: 9px 11px; border: 1px solid #cfc6b3; border-radius: 6px; background: #fff;
+}
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--brand); outline-offset: 0; }
+.btn {
+  font: inherit; font-weight: 600; cursor: pointer; border: none; border-radius: 6px;
+  padding: 10px 18px; background: var(--brand); color: #fff;
+}
+.btn:hover { background: var(--brand-dark); }
+.btn:disabled { background: #b9b4a8; cursor: not-allowed; }
+.btn.secondary { background: #fff; color: var(--brand); border: 1px solid var(--brand); }
+.btn.danger { background: var(--danger); }
+.alert { padding: 10px 14px; border-radius: 6px; font-size: 15px; }
+.alert-error { background: #fbe5e1; color: var(--danger); border: 1px solid #f0c2b9; }
+.alert-success { background: #e1f2e7; color: var(--ok); border: 1px solid #b9dfc6; }
+.field-error { color: var(--danger); font-size: 13px; font-weight: 400; }
+.hidden { display: none !important; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+.product-card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 8px; }
+.product-card .thumb { height: 110px; border-radius: 8px; background: linear-gradient(135deg, #dbe8d6, #f3ead2); display: grid; place-items: center; font-size: 40px; }
+.product-card .product-name { margin: 0; font-size: 17px; }
+.product-card .price { font-weight: 700; color: var(--brand); }
+.product-card .stock { font-size: 13px; color: var(--muted); }
+.product-card .out-of-stock { color: var(--danger); font-weight: 600; }
+.toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 18px; flex-wrap: wrap; }
+table { border-collapse: collapse; width: 100%; background: #fff; }
+th, td { border-bottom: 1px solid var(--line); padding: 10px 12px; text-align: left; }
+th { background: #f2ece0; }
+.spinner { width: 28px; height: 28px; border: 3px solid #d8d1c2; border-top-color: var(--brand); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.hub { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.hub a { display: block; padding: 18px; background: #fff; border: 1px solid var(--line); border-radius: 10px; text-decoration: none; color: var(--ink); }
+.hub a:hover { border-color: var(--brand); }
+.hub strong { display: block; color: var(--brand); font-size: 17px; }
+.toast { position: fixed; right: 24px; bottom: 24px; background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 8px; }

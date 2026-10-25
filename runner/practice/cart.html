@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Giỏ hàng - Tiệm Trà Mộc</title>
+  <link rel="stylesheet" href="/practice/assets/site.css">
+  <script src="/practice/assets/site.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Giỏ hàng</h1>
+    <p id="empty-cart" class="subtitle hidden">Giỏ hàng đang trống. <a href="/practice/products.html">Mua sắm ngay</a></p>
+    <table id="cart-table">
+      <thead><tr><th>Sản phẩm</th><th>Đơn giá</th><th>Số lượng</th><th>Thành tiền</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p style="text-align:right;font-size:20px">Tổng cộng: <strong id="cart-total">0₫</strong></p>
+    <div style="text-align:right">
+      <a class="btn" href="/practice/checkout.html" id="checkout-btn">Thanh toán</a>
+    </div>
+  </main>
+  <script>
+    function render() {
+      const cart = getCart();
+      const body = document.querySelector("#cart-table tbody");
+      body.innerHTML = cart.map((line) => {
+        const p = PRODUCTS.find((x) => x.id === line.id);
+        return `<tr class="cart-row" data-id="${p.id}">
+          <td class="item-name">${p.name}</td>
+          <td class="item-price">${formatPrice(p.price)}</td>
+          <td><input type="number" class="item-qty" min="1" max="${p.stock}" value="${line.qty}" aria-label="Số lượng ${p.name}"></td>
+          <td class="item-subtotal">${formatPrice(p.price * line.qty)}</td>
+          <td><button class="btn danger remove-item" data-id="${p.id}">Xóa</button></td>
+        </tr>`;
+      }).join("");
+      const total = cart.reduce((s, l) => s + PRODUCTS.find((x) => x.id === l.id).price * l.qty, 0);
+      document.getElementById("cart-total").textContent = formatPrice(total);
+      document.getElementById("empty-cart").classList.toggle("hidden", cart.length > 0);
+      document.getElementById("cart-table").classList.toggle("hidden", cart.length === 0);
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      render();
+      document.querySelector("#cart-table tbody").addEventListener("change", (e) => {
+        if (!e.target.classList.contains("item-qty")) return;
+        const id = Number(e.target.closest("tr").dataset.id);
+        const qty = Math.max(1, Math.floor(Number(e.target.value) || 1));
+        saveCart(getCart().map((l) => (l.id === id ? { ...l, qty } : l)));
+        render();
+      });
+      document.querySelector("#cart-table tbody").addEventListener("click", (e) => {
+        const btn = e.target.closest(".remove-item");
+        if (!btn) return;
+        saveCart(getCart().filter((l) => l.id !== Number(btn.dataset.id)));
+        render();
+      });
+    });
+  </script>
+</body>
+</html>

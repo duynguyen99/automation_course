@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hộp thoại - Tiệm Trà Mộc</title>
+  <link rel="stylesheet" href="/practice/assets/site.css">
+  <script src="/practice/assets/site.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Hộp thoại của trình duyệt</h1>
+    <p class="subtitle">Ba loại hộp thoại JavaScript: alert, confirm, prompt.</p>
+    <div class="card" style="display:flex;gap:12px;flex-wrap:wrap">
+      <button class="btn" id="alert-btn">Hiện thông báo</button>
+      <button class="btn" id="confirm-btn">Xóa giỏ hàng</button>
+      <button class="btn" id="prompt-btn">Nhập mã giảm giá</button>
+    </div>
+    <p style="font-size:18px">Kết quả: <strong id="alert-result">(chưa có)</strong></p>
+  </main>
+  <script>
+    const out = (t) => { document.getElementById("alert-result").textContent = t; };
+    document.getElementById("alert-btn").addEventListener("click", () => {
+      alert("Chào mừng bạn đến Tiệm Trà Mộc!");
+      out("Đã đóng thông báo");
+    });
+    document.getElementById("confirm-btn").addEventListener("click", () => {
+      out(confirm("Bạn có chắc muốn xóa giỏ hàng?") ? "Đã xóa giỏ hàng" : "Đã hủy");
+    });
+    document.getElementById("prompt-btn").addEventListener("click", () => {
+      const code = prompt("Nhập mã giảm giá:");
+      out(code === null ? "Không nhập mã" : code.trim().toUpperCase() === "TRAMOC10" ? "Áp dụng mã thành công: giảm 10%" : "Mã không hợp lệ: " + code);
+    });
+  </script>
+</body>
+</html>

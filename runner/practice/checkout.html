@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thanh toán - Tiệm Trà Mộc</title>
+  <link rel="stylesheet" href="/practice/assets/site.css">
+  <script src="/practice/assets/site.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Thanh toán</h1>
+    <p class="subtitle">Điền thông tin giao hàng.</p>
+    <div class="card">
+      <form class="form" id="checkout-form" novalidate>
+        <label>Họ và tên
+          <input type="text" id="fullname" name="fullname">
+          <span class="field-error" id="fullname-error"></span>
+        </label>
+        <label>Số điện thoại
+          <input type="tel" id="phone" name="phone" placeholder="10 chữ số, bắt đầu bằng 0">
+          <span class="field-error" id="phone-error"></span>
+        </label>
+        <label>Email
+          <input type="email" id="email" name="email">
+          <span class="field-error" id="email-error"></span>
+        </label>
+        <label>Tỉnh/Thành phố
+          <select id="city" name="city">
+            <option value="">-- Chọn tỉnh/thành --</option>
+            <option value="HN">Hà Nội</option>
+            <option value="HCM">TP. Hồ Chí Minh</option>
+            <option value="DN">Đà Nẵng</option>
+            <option value="CT">Cần Thơ</option>
+          </select>
+          <span class="field-error" id="city-error"></span>
+        </label>
+        <label>Địa chỉ
+          <textarea id="address" name="address" rows="2"></textarea>
+        </label>
+        <fieldset style="border:1px solid var(--line);border-radius:6px">
+          <legend>Hình thức giao hàng</legend>
+          <label style="display:flex;gap:8px;font-weight:400"><input type="radio" name="shipping" value="standard" id="ship-standard" checked> Tiêu chuẩn (30.000₫)</label>
+          <label style="display:flex;gap:8px;font-weight:400"><input type="radio" name="shipping" value="express" id="ship-express"> Hỏa tốc (60.000₫)</label>
+        </fieldset>
+        <label style="display:flex;gap:8px;font-weight:400">
+          <input type="checkbox" id="agree" name="agree"> Tôi đồng ý với điều khoản mua hàng
+        </label>
+        <span class="field-error" id="agree-error"></span>
+        <button type="submit" class="btn" id="place-order">Đặt hàng</button>
+      </form>
+      <div id="order-success" class="alert alert-success hidden" role="status"></div>
+    </div>
+  </main>
+  <script>
+    document.getElementById("checkout-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const v = (id) => document.getElementById(id).value.trim();
+      const errors = {
+        fullname: v("fullname") ? "" : "Vui lòng nhập họ tên",
+        phone: /^0\d{9}$/.test(v("phone")) ? "" : "Số điện thoại không hợp lệ",
+        email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v("email")) ? "" : "Email không hợp lệ",
+        city: v("city") ? "" : "Vui lòng chọn tỉnh/thành",
+        agree: document.getElementById("agree").checked ? "" : "Bạn cần đồng ý với điều khoản",
+      };
+      for (const [k, msg] of Object.entries(errors)) document.getElementById(k + "-error").textContent = msg;
+      if (Object.values(errors).some(Boolean)) return;
+      const express = document.getElementById("ship-express").checked;
+      const code = "TM" + String(Date.now()).slice(-6);
+      const box = document.getElementById("order-success");
+      box.innerHTML = `Đặt hàng thành công! Mã đơn: <strong id="order-code">${code}</strong>. Giao hàng ${express ? "hỏa tốc" : "tiêu chuẩn"}.`;
+      box.classList.remove("hidden");
+      document.getElementById("checkout-form").classList.add("hidden");
+      localStorage.removeItem("cart");
+      renderCartCount();
+    });
+  </script>
+</body>
+</html>

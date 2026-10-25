@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đơn hàng - Tiệm Trà Mộc</title>
+  <link rel="stylesheet" href="/practice/assets/site.css">
+  <script src="/practice/assets/site.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Quản lý đơn hàng</h1>
+    <p class="subtitle">Bảng không có id cho từng ô: hãy dùng XPath để tìm theo nội dung.</p>
+    <table class="orders">
+      <thead>
+        <tr><th>Mã đơn</th><th>Khách hàng</th><th>Thành phố</th><th>Tổng tiền</th><th>Trạng thái</th><th></th></tr>
+      </thead>
+      <tbody>
+        <tr><td>TM1001</td><td>Nguyễn Thị Lan</td><td>Hà Nội</td><td>370.000₫</td><td><span class="badge">Đã giao</span></td><td><button class="btn secondary view">Xem</button></td></tr>
+        <tr><td>TM1002</td><td>Trần Minh Khoa</td><td>TP. Hồ Chí Minh</td><td>840.000₫</td><td><span class="badge">Đang giao</span></td><td><button class="btn secondary view">Xem</button></td></tr>
+        <tr><td>TM1003</td><td>Lê Hoàng Mai</td><td>Đà Nẵng</td><td>150.000₫</td><td><span class="badge">Đã hủy</span></td><td><button class="btn secondary view">Xem</button></td></tr>
+        <tr><td>TM1004</td><td>Phạm Quốc Bảo</td><td>Cần Thơ</td><td>560.000₫</td><td><span class="badge">Đang giao</span></td><td><button class="btn secondary view">Xem</button></td></tr>
+        <tr><td>TM1005</td><td>Võ Thu Hà</td><td>Hà Nội</td><td>1.240.000₫</td><td><span class="badge">Chờ xác nhận</span></td><td><button class="btn secondary view">Xem</button></td></tr>
+      </tbody>
+    </table>
+    <p>Đơn đang xem: <strong id="selected-order">(chưa chọn)</strong></p>
+  </main>
+  <script>
+    document.querySelector("table.orders tbody").addEventListener("click", (e) => {
+      if (!e.target.classList.contains("view")) return;
+      const row = e.target.closest("tr");
+      document.getElementById("selected-order").textContent = row.cells[0].textContent + " - " + row.cells[1].textContent;
+    });
+  </script>
+</body>
+</html>

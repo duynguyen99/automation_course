@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# runner downloads
+/runner/lib/jars/
+/runner/.tools/

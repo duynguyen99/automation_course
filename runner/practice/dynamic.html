@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tải chậm - Tiệm Trà Mộc</title>
+  <link rel="stylesheet" href="/practice/assets/site.css">
+  <script src="/practice/assets/site.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Kiểm tra đơn hàng</h1>
+    <p class="subtitle">Dữ liệu được tải từ "máy chủ" mất 2 đến 4 giây. Code test phải biết chờ.</p>
+
+    <section class="card" style="display:grid;gap:14px;max-width:520px">
+      <h2 style="margin:0;font-size:18px">1. Phần tử xuất hiện muộn</h2>
+      <button class="btn" id="load-btn">Tải trạng thái đơn hàng</button>
+      <div id="loading" class="hidden" style="display:flex;gap:10px;align-items:center"><div class="spinner"></div> Đang tải...</div>
+      <div id="result" class="alert alert-success hidden"></div>
+    </section>
+
+    <section class="card" style="display:grid;gap:14px;max-width:520px;margin-top:18px">
+      <h2 style="margin:0;font-size:18px">2. Nút bật sau một lúc</h2>
+      <p style="margin:0">Nút "Xác nhận" chỉ bấm được sau khi hệ thống kiểm tra xong (3 giây).</p>
+      <button class="btn" id="confirm-btn" disabled>Xác nhận</button>
+      <p id="confirm-message" class="hidden">Đã xác nhận đơn hàng!</p>
+    </section>
+
+    <section class="card" style="display:grid;gap:14px;max-width:520px;margin-top:18px">
+      <h2 style="margin:0;font-size:18px">3. Chữ thay đổi</h2>
+      <p style="margin:0">Trạng thái: <strong id="status">Đang xử lý</strong></p>
+    </section>
+  </main>
+  <script>
+    const delay = () => 2000 + Math.floor(Math.random() * 2000);
+    document.getElementById("load-btn").addEventListener("click", () => {
+      document.getElementById("loading").classList.remove("hidden");
+      setTimeout(() => {
+        document.getElementById("loading").classList.add("hidden");
+        const result = document.getElementById("result");
+        result.textContent = "Đơn hàng TM2026 đang được giao";
+        result.classList.remove("hidden");
+      }, delay());
+    });
+    setTimeout(() => { document.getElementById("confirm-btn").disabled = false; }, 3000);
+    document.getElementById("confirm-btn").addEventListener("click", () => {
+      document.getElementById("confirm-message").classList.remove("hidden");
+    });
+    setTimeout(() => { document.getElementById("status").textContent = "Hoàn tất"; }, delay());
+  </script>
+</body>
+</html>

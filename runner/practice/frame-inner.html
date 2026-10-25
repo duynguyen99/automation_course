@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>Form trong iframe</title>
+  <link rel="stylesheet" href="/practice/assets/site.css">
+</head>
+<body style="padding:16px">
+  <form class="form" id="newsletter-form">
+    <label>Email nhận tin
+      <input type="email" id="newsletter-email">
+    </label>
+    <button type="submit" class="btn" id="subscribe-btn">Đăng ký</button>
+    <p id="subscribe-message" class="alert alert-success hidden"></p>
+  </form>
+  <script>
+    document.getElementById("newsletter-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("newsletter-email").value.trim();
+      const msg = document.getElementById("subscribe-message");
+      msg.textContent = email ? "Đã đăng ký: " + email : "Vui lòng nhập email";
+      msg.className = email ? "alert alert-success" : "alert alert-error";
+    });
+  </script>
+</body>
+</html>

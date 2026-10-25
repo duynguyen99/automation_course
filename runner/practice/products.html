@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sản phẩm - Tiệm Trà Mộc</title>
+  <link rel="stylesheet" href="/practice/assets/site.css">
+  <script src="/practice/assets/site.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Sản phẩm</h1>
+    <p class="subtitle">Trà ngon từ khắp mọi miền.</p>
+    <div class="toolbar">
+      <input type="text" id="search" placeholder="Tìm sản phẩm..." aria-label="Tìm sản phẩm">
+      <select id="sort" aria-label="Sắp xếp">
+        <option value="default">Mặc định</option>
+        <option value="price-asc">Giá tăng dần</option>
+        <option value="price-desc">Giá giảm dần</option>
+        <option value="name">Tên A-Z</option>
+      </select>
+      <span id="result-count" class="subtitle" style="margin:0"></span>
+    </div>
+    <div class="grid" id="product-list"></div>
+    <p id="no-result" class="alert alert-error hidden">Không tìm thấy sản phẩm nào</p>
+  </main>
+  <script>
+    function render() {
+      const keyword = document.getElementById("search").value.trim().toLowerCase();
+      const sort = document.getElementById("sort").value;
+      let items = PRODUCTS.filter((p) => p.name.toLowerCase().includes(keyword));
+      if (sort === "price-asc") items = [...items].sort((a, b) => a.price - b.price);
+      if (sort === "price-desc") items = [...items].sort((a, b) => b.price - a.price);
+      if (sort === "name") items = [...items].sort((a, b) => a.name.localeCompare(b.name, "vi"));
+      const list = document.getElementById("product-list");
+      list.innerHTML = items.map((p) => `
+        <article class="product-card" data-id="${p.id}" data-category="${p.category}">
+          <div class="thumb">${p.icon}</div>
+          <h3 class="product-name">${p.name}</h3>
+          <span class="price">${formatPrice(p.price)}</span>
+          ${p.stock > 0
+            ? `<span class="stock">Còn ${p.stock} sản phẩm</span>
+               <button class="btn add-to-cart" data-id="${p.id}">Thêm vào giỏ</button>`
+            : `<span class="stock out-of-stock">Hết hàng</span>
+               <button class="btn add-to-cart" data-id="${p.id}" disabled>Hết hàng</button>`}
+        </article>`).join("");
+      document.getElementById("result-count").textContent = items.length + " sản phẩm";
+      document.getElementById("no-result").classList.toggle("hidden", items.length > 0);
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      render();
+      document.getElementById("search").addEventListener("input", render);
+      document.getElementById("sort").addEventListener("change", render);
+      document.getElementById("product-list").addEventListener("click", (e) => {
+        const btn = e.target.closest(".add-to-cart");
+        if (!btn || btn.disabled) return;
+        addToCart(Number(btn.dataset.id));
+        toast("Đã thêm vào giỏ hàng");
+      });
+    });
+  </script>
+</body>
+</html>

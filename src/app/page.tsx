@@ -1,69 +1,93 @@
-import Image from "next/image";
+import Link from "next/link";
+import { ChapterProgress, ContinueButton, ProgressBackup } from "@/components/HomeProgress";
+import { allLessons, getCourse, toRef } from "@/lib/course";
+
+const TOOLCHAIN = [
+  { name: "Java 21", role: "ngôn ngữ" },
+  { name: "Maven", role: "quản lý project" },
+  { name: "JUnit 6", role: "viết test" },
+  { name: "AssertJ", role: "so sánh kết quả" },
+  { name: "Selenium 4", role: "điều khiển trình duyệt" },
+  { name: "Cucumber 8", role: "BDD · Gherkin" },
+  { name: "Allure", role: "báo cáo" },
+  { name: "GitHub Actions", role: "chạy tự động" },
+];
 
 export default function Home() {
+  const course = getCourse();
+  const lessons = allLessons(course).map(toRef);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <main className="paper min-h-dvh">
+      <div className="mx-auto grid max-w-6xl gap-14 px-6 py-12 sm:px-10 lg:grid-cols-[1.05fr_1fr] lg:gap-20 lg:py-20">
+        {/* ---------- cover ---------- */}
+        <section className="lg:sticky lg:top-16 lg:self-start">
+          <p className="font-mono text-xs uppercase tracking-[0.28em] text-seal">QA·Academy — Ấn bản 2026</p>
+          <h1 className="mt-5 font-display text-[3.1rem] font-semibold leading-[1.02] tracking-tight text-balance sm:text-[4.4rem]">
+            Sổ tay
+            <br />
+            <span className="italic text-seal">Automation</span> Tester
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mt-6 max-w-md text-lg leading-relaxed text-ink-soft">
+            Từ người chưa từng viết một dòng code đến tự tay xây framework test web bằng Java, Selenium và Cucumber.
+            Mỗi trang một bài nhỏ: đọc, gõ code, bấm chạy, thấy kết quả ngay.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+          <div className="mt-9">
+            <ContinueButton lessons={lessons} />
+          </div>
+
+          <dl className="mt-12 grid max-w-md grid-cols-2 gap-x-6 gap-y-3 border-t border-rule pt-6">
+            {TOOLCHAIN.map((t) => (
+              <div key={t.name} className="border-b border-dotted border-rule pb-1.5">
+                <dt className="font-medium">{t.name}</dt>
+                <dd className="text-xs text-ink-faint">{t.role}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        {/* ---------- table of contents ---------- */}
+        <section aria-labelledby="toc">
+          <h2 id="toc" className="font-display text-3xl font-semibold">
+            Mục lục
+          </h2>
+          <ol className="mt-6 border-t-2 border-ink">
+            {course.map((ch) => {
+              const ready = ch.lessons.length > 0;
+              const first = ch.lessons[0];
+              return (
+                <li key={ch.slug} className="border-b border-rule">
+                  <div className={`grid grid-cols-[3rem_1fr] gap-x-3 py-5 ${ready ? "" : "opacity-55"}`}>
+                    <span className="font-display text-3xl font-semibold italic leading-none text-seal tabular-nums">
+                      {String(ch.number).padStart(2, "0")}
+                    </span>
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                        {ready ? (
+                          <Link href={`/learn/${first.chapterSlug}/${first.slug}`} className="font-display text-xl font-semibold hover:text-seal">
+                            {ch.title}
+                          </Link>
+                        ) : (
+                          <span className="font-display text-xl font-semibold">{ch.title}</span>
+                        )}
+                        {ready ? (
+                          <ChapterProgress lessons={ch.lessons.map(toRef)} />
+                        ) : (
+                          <span className="font-mono text-[0.68rem] uppercase tracking-widest text-ink-faint">Đang viết</span>
+                        )}
+                      </div>
+                      {ch.subtitle && <p className="mt-1 text-[0.95rem] leading-relaxed text-ink-soft">{ch.subtitle}</p>}
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+          <div className="mt-8">
+            <ProgressBackup />
+          </div>
+        </section>
+      </div>
+    </main>
   );
 }
