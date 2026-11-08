@@ -13,7 +13,7 @@ Yêu cầu:
 npm install
 npm run runner:setup   # một lần: tự tải Maven (nếu chưa có) + thư viện Java vào runner/lib/jars
 npm run runner         # terminal 1: máy chạy code + website mẫu, http://localhost:4000/practice/
-npm run dev            # terminal 2: web học, http://localhost:3000
+npm run dev -- -p 3100 # terminal 2: web học, http://localhost:3100
 ```
 
 ## Kiến trúc

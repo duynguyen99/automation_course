@@ -102,7 +102,15 @@ export function importProgress(json: string): boolean {
   try {
     const parsed = JSON.parse(json) as Partial<Progress>;
     if (typeof parsed !== "object" || parsed === null || typeof parsed.completed !== "object") return false;
-    write({ ...EMPTY, ...parsed });
+    // Merge instead of replace, so importing never loses pages already finished here.
+    const current = getSnapshot();
+    const attempts = { ...current.attempts };
+    for (const [id, n] of Object.entries(parsed.attempts ?? {})) attempts[id] = Math.max(attempts[id] ?? 0, n);
+    write({
+      completed: { ...parsed.completed, ...current.completed },
+      code: { ...current.code, ...parsed.code },
+      attempts,
+    });
     return true;
   } catch {
     return false;
