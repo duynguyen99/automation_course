@@ -1,0 +1,40 @@
+# Runner + HTTPS on one small VM. Usage (from the repo root on the server):
+#   cp deploy/.env.example deploy/.env   # then fill in the values
+#   docker compose -f deploy/docker-compose.yml --env-file deploy/.env up -d --build
+services:
+  runner:
+    build:
+      context: ..
+      dockerfile: deploy/runner.Dockerfile
+    restart: unless-stopped
+    environment:
+      RUNNER_TOKEN: ${RUNNER_TOKEN:?set RUNNER_TOKEN in deploy/.env}
+      RUNNER_CONCURRENCY: ${RUNNER_CONCURRENCY:-2}
+    # Limits so a runaway learner program can't take the machine down.
+    mem_limit: 4g
+    cpus: 2
+    pids_limit: 512
+    shm_size: 1g
+    security_opt:
+      - no-new-privileges:true
+    expose:
+      - "4000"
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - runner
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      RUNNER_DOMAIN: ${RUNNER_DOMAIN:?set RUNNER_DOMAIN in deploy/.env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

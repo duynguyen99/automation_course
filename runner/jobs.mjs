@@ -32,7 +32,16 @@ const BROWSER_TIMEOUT_MS = 90_000;
 const JVM_FLAGS = [
   "-Xmx384m", "-Xss4m", "-XX:+UseSerialGC", "-XX:TieredStopAtLevel=1",
   "-Dfile.encoding=UTF-8", "-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8",
+  // In the Linux container Chromium's driver comes from the distro (Selenium Manager has no ARM64 builds).
+  ...(process.env.CHROMEDRIVER_PATH ? [`-Dwebdriver.chrome.driver=${process.env.CHROMEDRIVER_PATH}`] : []),
 ];
+
+/** Learner code must never see the runner's secrets. */
+function learnerEnv(tmpDir) {
+  const env = { ...process.env, TEMP: tmpDir, TMP: tmpDir, TMPDIR: tmpDir };
+  delete env.RUNNER_TOKEN;
+  return env;
+}
 
 /** Parses javac output like `Main.java:3: error: ';' expected` plus the caret line. */
 export function parseDiagnostics(stderr) {
@@ -136,7 +145,7 @@ export async function runJob({ mode = "java", files, checks, stdin, timeoutSec }
     const browser = usesBrowser(files);
     if (browser) stopWatching = watchBrowser(tmpDirForJvm, (data) => onEvent({ type: "frame", data }));
     const timeoutMs = (timeoutSec ? timeoutSec * 1000 : 0) || (browser ? BROWSER_TIMEOUT_MS : DEFAULT_TIMEOUT_MS[mode]);
-    const env = { ...process.env, TEMP: tmpDirForJvm, TMP: tmpDirForJvm, TMPDIR: tmpDirForJvm };
+    const env = learnerEnv(tmpDirForJvm);
     const mainArgs = mode === "java"
       ? [...JVM_FLAGS, `-Djava.io.tmpdir=${tmpDirForJvm}`, "-cp", classPath, "__Harness"]
       : [...JVM_FLAGS, `-Djava.io.tmpdir=${tmpDirForJvm}`, "-cp", classPath,

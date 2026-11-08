@@ -1,13 +1,24 @@
 // QA Academy code runner: compiles and runs learner Java (plain, JUnit, Cucumber, Selenium)
 // and serves the practice website that Selenium lessons automate.
-// Local-only for now. Before exposing it publicly, run it inside a locked-down container
-// (no outbound network except the practice site, read-only FS, cgroup limits, non-root).
+// Locally it binds 127.0.0.1. Deployed, it runs in the container from deploy/ with
+// RUNNER_HOST=0.0.0.0 and RUNNER_TOKEN set, so only the web app can submit code.
+import { timingSafeEqual } from "node:crypto";
 import { createServer } from "node:http";
 import { exec } from "./exec.mjs";
 import { MODES, runJob } from "./jobs.mjs";
 import { handlePractice } from "./practice.mjs";
 
 const PORT = Number(process.env.RUNNER_PORT ?? 4000);
+const HOST = process.env.RUNNER_HOST ?? "127.0.0.1";
+const TOKEN = process.env.RUNNER_TOKEN ?? "";
+
+/** When a token is configured, /run requires the same value in the x-runner-token header. */
+function authorized(req) {
+  if (!TOKEN) return true;
+  const given = Buffer.from(String(req.headers["x-runner-token"] ?? ""));
+  const expected = Buffer.from(TOKEN);
+  return given.length === expected.length && timingSafeEqual(given, expected);
+}
 const JAVA = process.env.JAVA_HOME ? `${process.env.JAVA_HOME}/bin/java` : "java";
 
 const LIMITS = {
@@ -114,8 +125,10 @@ const server = createServer(async (req, res) => {
       const v = await exec(JAVA, ["-version"], { timeoutMs: 10_000 });
       return send(res, 200, { ok: v.code === 0, java: v.stderr.split("\n")[0] });
     }
-    if (req.method === "POST" && url.pathname === "/run") return await handleRun(req, res, false);
-    if (req.method === "POST" && url.pathname === "/run/java") return await handleRun(req, res, true);
+    if (req.method === "POST" && (url.pathname === "/run" || url.pathname === "/run/java")) {
+      if (!authorized(req)) return send(res, 401, { error: "Thiếu hoặc sai runner token" });
+      return await handleRun(req, res, url.pathname === "/run/java");
+    }
     if (await handlePractice(req, res, url)) return;
     send(res, 404, { error: "Not found" });
   } catch (err) {
@@ -125,6 +138,6 @@ const server = createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, "127.0.0.1", () => {
-  console.log(`[runner] listening on http://localhost:${PORT}  (practice site: /practice/)`);
+server.listen(PORT, HOST, () => {
+  console.log(`[runner] listening on http://${HOST}:${PORT}  (practice site: /practice/)${TOKEN ? "  token required" : ""}`);
 });

@@ -3,6 +3,10 @@ import { gradeRun } from "@/lib/gradeRun";
 import type { Lesson, RunEvent, RunnerResult } from "@/lib/types";
 
 const RUNNER_URL = process.env.RUNNER_URL ?? "http://127.0.0.1:4000";
+const RUNNER_TOKEN = process.env.RUNNER_TOKEN;
+
+// Selenium lessons can take a minute or two (browser start + learner waits).
+export const maxDuration = 300;
 const MAX_CODE_CHARS = 100_000;
 const RUNNER_DOWN = "Không kết nối được máy chạy code. Hãy mở terminal và chạy: npm run runner";
 
@@ -47,7 +51,11 @@ export async function POST(request: Request) {
   try {
     upstream = await fetch(`${RUNNER_URL}/run`, {
       method: "POST",
-      headers: { "content-type": "application/json", accept: "application/x-ndjson" },
+      headers: {
+        "content-type": "application/json",
+        accept: "application/x-ndjson",
+        ...(RUNNER_TOKEN ? { "x-runner-token": RUNNER_TOKEN } : {}),
+      },
       body: JSON.stringify({
         mode: lesson.mode,
         files: runnerFiles,

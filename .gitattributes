@@ -1,0 +1,4 @@
+# Files executed inside the Linux container must keep LF line endings
+*.sh text eol=lf
+deploy/chromium-flags text eol=lf
+deploy/Caddyfile text eol=lf

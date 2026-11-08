@@ -1,0 +1,8 @@
+# Automatic HTTPS (Let's Encrypt) in front of the runner.
+{$RUNNER_DOMAIN} {
+	encode gzip
+	reverse_proxy runner:4000 {
+		# /run streams NDJSON (live browser frames): don't buffer.
+		flush_interval -1
+	}
+}

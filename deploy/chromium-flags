@@ -1,0 +1,2 @@
+# Sourced by /usr/bin/chromium (Debian) on every launch.
+export CHROMIUM_FLAGS="$CHROMIUM_FLAGS --no-sandbox --disable-dev-shm-usage --window-size=1280,800 --no-first-run"
